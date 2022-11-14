@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 
 @TeleOp(name = "TensorFlow Object Detection Webcam", group = "Linear Opmode")
-@Autonomous
+
 public class TensorFlowImageDetectionWebcam extends LinearOpMode {
 
     /*
@@ -23,9 +23,9 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "SleveImageDetection.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
-
+    //This PC\Control Hub v1.0\Internal shared storage\FIRST\ExternalLibraries
 
     private static final String[] LABELS = {
             "0 Woof",
@@ -105,10 +105,11 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
                         for (Recognition recognition : updatedRecognitions) {
                             double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
 
                             telemetry.addData(""," ");
+
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
                             telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
@@ -130,7 +131,7 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -152,7 +153,7 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
 
 
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
