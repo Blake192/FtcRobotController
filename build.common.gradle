@@ -51,6 +51,7 @@ android {
 
     aaptOptions {
         noCompress "tflite"
+        noCompress "SleveImageDetection.tflite"
     }
 
     defaultConfig {
