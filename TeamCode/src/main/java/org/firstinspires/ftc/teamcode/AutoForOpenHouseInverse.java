@@ -73,18 +73,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
-@Autonomous(name="Open House Auto Program F5 and A2", group="Open House")
+
+@Autonomous(name="Open House Auto Program A5 and F2", group="Open House")
 
 
 
 
-public class AutoForOpenHouse extends LinearOpMode {
+public class AutoForOpenHouseInverse extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
     DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
     DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
     DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+
     DcMotor lift = hardwareMap.dcMotor.get("lift");
+
     private Servo servoLeft;
     private Servo servoRight;
 
@@ -200,7 +203,7 @@ public class AutoForOpenHouse extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //move half tile left
-            move("left", 0.5);
+            move("right", 0.5);
             //raise arm to medium
             arm("medium");
             //move to medium junction
@@ -212,10 +215,10 @@ public class AutoForOpenHouse extends LinearOpMode {
             // reverse
             move("reverse", 0.5);
             // move to location 1
-            move("left", 0.5);
+            move("right", 0.5);
             move("forward", 1);
 
-            }
         }
+    }
 }
 
