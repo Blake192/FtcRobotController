@@ -95,7 +95,11 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
+        telemetry.addData(">", "Vuforia has INIT");
+        telemetry.update();
         initTfod();
+        telemetry.addData(">", "TFOD has INIT");
+        telemetry.update();
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -112,6 +116,8 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
             tfod.setZoom(1.0, 16.0/9.0);
+            telemetry.addData(">", "TFOD Zoom has INIT");
+            telemetry.update();
         }
 
         /** Wait for the game to begin */
@@ -133,16 +139,17 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
+                            /* double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
 
-                            telemetry.addData("","");
+                            */
+                            //telemetry.addData("","");
 
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                            //telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
+                            //telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         }
                         telemetry.update();
                     }
