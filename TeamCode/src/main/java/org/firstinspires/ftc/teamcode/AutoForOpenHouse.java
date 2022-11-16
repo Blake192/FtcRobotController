@@ -78,8 +78,51 @@ public class AutoForOpenHouse extends LinearOpMode {
     DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
     DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-    public void move(String direction, Float distance){
-
+    public void move(String direction, double distance){
+    if( direction == "forward"){
+        motorBackLeft.setPower(0.5);
+        motorFrontRight.setPower(0.5);
+        motorFrontLeft.setPower(0.5);
+        motorBackRight.setPower(0.5);
+        sleep((long) (1000 * distance));
+        motorBackLeft.setPower(0.0);
+        motorFrontRight.setPower(0.0);
+        motorFrontLeft.setPower(0.0);
+        motorBackRight.setPower(0.0);
+    }
+        if( direction == "right"){
+            motorFrontRight.setPower(-0.5);
+            motorFrontLeft.setPower(0.5);
+            motorBackRight.setPower(0.5);
+            motorBackLeft.setPower(-0.5);
+            sleep((long) (1000 * distance));
+            motorBackLeft.setPower(0.0);
+            motorFrontRight.setPower(0.0);
+            motorFrontLeft.setPower(0.0);
+            motorBackRight.setPower(0.0);
+        }
+        if( direction == "left"){
+            motorFrontRight.setPower(0.5);
+            motorFrontLeft.setPower(-0.5);
+            motorBackRight.setPower(-0.5);
+            motorBackLeft.setPower(0.5);
+            sleep((long) (1000 * distance));
+            motorBackLeft.setPower(0.0);
+            motorFrontRight.setPower(0.0);
+            motorFrontLeft.setPower(0.0);
+            motorBackRight.setPower(0.0);
+        }
+        if( direction == "reverse"){
+            motorBackLeft.setPower(-0.5);
+            motorFrontRight.setPower(-0.5);
+            motorFrontLeft.setPower(-0.5);
+            motorBackRight.setPower(-0.5);
+            sleep((long) (1000 * distance));
+            motorBackLeft.setPower(0.0);
+            motorFrontRight.setPower(0.0);
+            motorFrontLeft.setPower(0.0);
+            motorBackRight.setPower(0.0);
+        }
     }
 
     public void arm(String position){
@@ -89,6 +132,9 @@ public class AutoForOpenHouse extends LinearOpMode {
     public void grabber(String position){
         if (position == "open"){
 
+        }
+        if (position == "close"){
+            
         }
 
     }
@@ -127,20 +173,20 @@ public class AutoForOpenHouse extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //move half tile left
-            move(left, halfTile);
+            move("left", 0.5);
             //raise arm to medium
-            arm(medium);
+            arm("medium");
             //move to medium junction
-            move(forward, Tile);
+            move("forward", 1.0);
             //drop cone
-            grabber(drop);
+            grabber("open");
             //lower arm
-            arm(ground);
+            arm("ground");
             // reverse
-            move(reverse, halfTile);
+            move("reverse", 0.5);
             // move to location 1
-            move(left, halfTile);
-            move(forward, Tile);
+            move("left", 0.5);
+            move("forward", 1);
 
             }
         }
