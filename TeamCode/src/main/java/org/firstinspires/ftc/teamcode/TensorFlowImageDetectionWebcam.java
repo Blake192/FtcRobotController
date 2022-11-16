@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,7 +25,8 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/SleveImageDetection.tflite";
+
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
     //This PC\Control Hub v1.0\Internal shared storage\FIRST\ExternalLibraries
 
@@ -145,7 +148,7 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.75f;
-        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.isModelTensorFlow2 = false ; // changed to false
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
@@ -154,6 +157,8 @@ public class TensorFlowImageDetectionWebcam extends LinearOpMode {
 
 
         //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+
+
         tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
 }
