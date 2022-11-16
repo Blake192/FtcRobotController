@@ -20,9 +20,9 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 1120; // Never rest 40 for programming bot
-    // TODO: Change to Gobilda 5202 for final bot
-    public static final double MAX_RPM = 160;
+    public static final double TICKS_PER_REV = 537.7; // Set for Gobilda 5202 312 RPM
+    // DONE: Changed to Gobilda 5202 for final bot
+    public static final double MAX_RPM = 312;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -56,7 +56,7 @@ public class DriveConstants {
      */
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
     public static double kA = 0;
-    public static double kStatic = 600; // Alex said static is 600 for our encoders
+    public static double kStatic = 0; // Alex said static is 600 for our encoders??
 
 
     /*
