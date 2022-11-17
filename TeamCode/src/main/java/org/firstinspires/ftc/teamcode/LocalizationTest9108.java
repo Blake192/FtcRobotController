@@ -29,6 +29,7 @@ public class LocalizationTest9108 extends LinearOpMode {
     // Custom for claw
     private Servo servoLeft, servoRight;
 
+    
     public DcMotorEx lift;
 
     @Override
@@ -37,13 +38,24 @@ public class LocalizationTest9108 extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lift = hardwareMap.get(DcMotorEx.class, "lift");
+
+        // Needed for internal run to position PIDs
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Lift will suspend in midair rather than coasting when at 0 power
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         servoLeft = hardwareMap.get(Servo.class, "servoLeft");
         servoRight = hardwareMap.get(Servo.class, "servoRight");
 
+        telemetry.addData("New build", " Test");
+        telemetry.update();
+
         waitForStart();
 
-        boolean invert = false;
-        int invertInt;
+        boolean clawInvertRight = true, clawInvertLeft = true;
+
+
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -63,39 +75,50 @@ public class LocalizationTest9108 extends LinearOpMode {
 
 
             if (gamepad1.left_trigger > 0.05 && gamepad1.right_trigger < 0.05) { // Raise up on right trigger
-                lift.setPower(-1 * gamepad1.left_trigger);
+                lift.setTargetPosition(lift.getCurrentPosition()+100);
                 telemetry.addData("Left Trigger: ", gamepad1.left_trigger);
                 telemetry.update();
             }
 
             if (gamepad1.right_trigger > 0.05 && gamepad1.left_trigger < 0.05) {
-                lift.setPower(gamepad1.right_trigger);
+                lift.setTargetPosition(lift.getCurrentPosition()-100);
+            }
+
+            else {
+                lift.setTargetPosition(lift.getCurrentPosition());
+            }
+
+
+
+
+
+            // Right trigger controller 2
+            // Starts closed with cone and clawInvertRight = true
+            if (gamepad2.right_trigger > 0.05 && !clawInvertRight) {
+                // Servo only go 0 to 1
+                servoRight.setPosition(0.5); // Close
+                clawInvertRight = !clawInvertRight;
+            }
+
+            if (gamepad2.right_trigger > 0.05 && clawInvertRight) {
+                servoRight.setPosition(0.25); // Open
+                clawInvertRight = !clawInvertRight;
             }
             else {
-                lift.setPower(0);
-            }
-
-
-
-            if (gamepad1.x) {
-                invert = !invert;
-            }
-
-            if (invert = false) {
-                invertInt = 1;
-            } else {
-                invertInt = -1;
-            }
-
-            if (gamepad2.right_trigger > 0.05) {
-                servoRight.setPosition(servoRight.getPosition()-.5*invertInt);
-            } else {
                 servoRight.setPosition(servoRight.getPosition());
             }
 
-            if (gamepad2.left_trigger > 0.05) {
-                servoLeft.setPosition(servoLeft.getPosition()+.5*invertInt);
-            } else {
+            // Left trigger controller 2
+            // Starts closed with cone and clawInvertLeft = true at start
+            if (gamepad2.left_trigger > 0.05 && !clawInvertLeft) {
+                servoLeft.setPosition(0.5); // Close
+                clawInvertLeft = !clawInvertLeft;
+            }
+            if (gamepad2.left_trigger > 0.05 && clawInvertLeft) {
+                servoLeft.setPosition(0.25); // Open
+                clawInvertLeft = !clawInvertLeft;
+            }
+            else {
                 servoLeft.setPosition(servoLeft.getPosition());
             }
 

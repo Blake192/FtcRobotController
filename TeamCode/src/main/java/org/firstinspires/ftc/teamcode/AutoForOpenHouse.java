@@ -82,7 +82,7 @@ import org.firstinspires.ftc.teamcode.tfrec.Detector;
 
 
 public class AutoForOpenHouse extends LinearOpMode {
-    Detector myDector = new Detector(null, "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite", null, null);
+    //Detector myDector = new Detector(null, "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite", null, null);
 
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
