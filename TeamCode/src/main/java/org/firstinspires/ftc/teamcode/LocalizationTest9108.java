@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -27,9 +28,9 @@ public class LocalizationTest9108 extends LinearOpMode {
     // Custom for lift
     //private DcMotorEx lift;
     // Custom for claw
-    private Servo servoLeft, servoRight;
+    private ServoImplEx servoLeft, servoRight;
 
-    
+
     public DcMotorEx lift;
 
     @Override

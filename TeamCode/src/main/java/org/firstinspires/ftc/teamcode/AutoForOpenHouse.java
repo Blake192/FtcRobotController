@@ -74,16 +74,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.tfrec.Detector;
-
 @Autonomous(name="Open House Auto Program F5 and A2", group="Open House")
 
-
-
-
 public class AutoForOpenHouse extends LinearOpMode {
-    //Detector myDector = new Detector(null, "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite", null, null);
-
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
     DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
