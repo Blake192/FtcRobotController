@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -72,6 +74,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.tfrec.Detector;
 
 @Autonomous(name="Open House Auto Program F5 and A2", group="Open House")
 
@@ -79,6 +82,8 @@ import com.qualcomm.robotcore.util.Range;
 
 
 public class AutoForOpenHouse extends LinearOpMode {
+    Detector myDector = new Detector(null, "/sdcard/FIRST/ExternalLibraries/SleveImageDetection.tflite", null, null);
+
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
     DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
@@ -97,7 +102,7 @@ public class AutoForOpenHouse extends LinearOpMode {
             motorFrontRight.setPower(0.5);
             motorFrontLeft.setPower(0.5);
             motorBackRight.setPower(0.5);
-            sleep((long) (1000 * distance));
+            sleep((long) (500 * distance));
             motorBackLeft.setPower(0.0);
             motorFrontRight.setPower(0.0);
             motorFrontLeft.setPower(0.0);
@@ -108,7 +113,7 @@ public class AutoForOpenHouse extends LinearOpMode {
             motorFrontLeft.setPower(0.5);
             motorBackRight.setPower(0.5);
             motorBackLeft.setPower(-0.5);
-            sleep((long) (1000 * distance));
+            sleep((long) (500 * distance));
             motorBackLeft.setPower(0.0);
             motorFrontRight.setPower(0.0);
             motorFrontLeft.setPower(0.0);
@@ -119,7 +124,7 @@ public class AutoForOpenHouse extends LinearOpMode {
             motorFrontLeft.setPower(-0.5);
             motorBackRight.setPower(-0.5);
             motorBackLeft.setPower(0.5);
-            sleep((long) (1000 * distance));
+            sleep((long) (500 * distance));
             motorBackLeft.setPower(0.0);
             motorFrontRight.setPower(0.0);
             motorFrontLeft.setPower(0.0);
@@ -130,7 +135,7 @@ public class AutoForOpenHouse extends LinearOpMode {
             motorFrontRight.setPower(-0.5);
             motorFrontLeft.setPower(-0.5);
             motorBackRight.setPower(-0.5);
-            sleep((long) (1000 * distance));
+            sleep((long) (500 * distance));
             motorBackLeft.setPower(0.0);
             motorFrontRight.setPower(0.0);
             motorFrontLeft.setPower(0.0);
@@ -148,7 +153,7 @@ public class AutoForOpenHouse extends LinearOpMode {
             lift.setPower(1);
             sleep(3000);
             lift.setPower(0);
-        }
+         }
     }
 
     public void grabber(String position){
@@ -202,13 +207,13 @@ public class AutoForOpenHouse extends LinearOpMode {
             //move half tile left
             move("left", 0.5);
             //raise arm to medium
-            arm("medium");
+            //arm("medium");
             //move to medium junction
             move("forward", 1.0);
             //drop cone
-            grabber("open");
+            //grabber("open");
             //lower arm
-            arm("ground");
+            //arm("ground");
             // reverse
             move("reverse", 0.5);
             // move to location 1
