@@ -307,7 +307,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle - 90.0;
+        return imu.getAngularOrientation().firstAngle + 90.0f;
     }
 
     @Override

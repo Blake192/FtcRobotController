@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -28,7 +29,7 @@ public class LocalizationTest9108 extends LinearOpMode {
     // Custom for lift
     //private DcMotorEx lift;
     // Custom for claw
-    private ServoImplEx servoLeft, servoRight;
+    public ServoImplEx servoLeft, servoRight;
 
 
     public DcMotorEx lift;
@@ -46,13 +47,15 @@ public class LocalizationTest9108 extends LinearOpMode {
         // Lift will suspend in midair rather than coasting when at 0 power
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
-        servoRight = hardwareMap.get(Servo.class, "servoRight");
+        servoLeft = hardwareMap.get(ServoImplEx.class, "servoLeft");
+        servoRight = hardwareMap.get(ServoImplEx.class, "servoRight");
 
-        telemetry.addData("New build", " Test");
-        telemetry.update();
 
         waitForStart();
+
+
+
+
 
         boolean clawInvertRight = true, clawInvertLeft = true;
 
@@ -74,6 +77,18 @@ public class LocalizationTest9108 extends LinearOpMode {
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
 
+            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
+            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
+            telemetry.addData("Value of servoLeft.getPosition();", servoLeft.getPosition());
+
+            telemetry.addData(" Vaule of: servoRight.getPwmRange(): ", servoRight.getPwmRange());
+            telemetry.addData("Value of: servoRight.isPwmEnabled(): ", servoRight.isPwmEnabled());
+            telemetry.addData("Value of servoRight.getPosition();", servoRight.getPosition());
+
+            telemetry.addData("lift.getCurrentPosition(): ", lift.getCurrentPosition());
+
+
+            telemetry.update();
 
             if (gamepad1.left_trigger > 0.05 && gamepad1.right_trigger < 0.05) { // Raise up on right trigger
                 lift.setTargetPosition(lift.getCurrentPosition()+100);
