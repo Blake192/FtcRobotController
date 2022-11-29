@@ -199,7 +199,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
                             getLayoutId(),
                             getDesiredPreviewFrameSize(), telemetry);
 
-            camera2Fragment.setCamera(this.cameraId);
+            camera2Fragment.setCamera("Webcam");
             fragment = camera2Fragment;
         } else {
             fragment =
