@@ -269,7 +269,8 @@ public class CameraConnectionFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        textureView = (AutoFitTextureView) view.findViewById(R.id.textView10);
+        //changed texture to Text View 10 in attempt to fix.
     }
 
     @Override
@@ -335,11 +336,12 @@ public class CameraConnectionFragment extends Fragment {
         } catch (final CameraAccessException e) {
             telemetry.addData("Error", "Exception!", e.getMessage());
         } catch (final NullPointerException e) {
-            // Currently an NPE is thrown when the Camera2API is used but not supported on the
+            /* Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
             ErrorDialog.newInstance(getString(R.string.tfe_ic_camera_error))
                     .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             throw new IllegalStateException(getString(R.string.tfe_ic_camera_error));
+            */
         }
 
         cameraConnectionCallback.onPreviewSizeChosen(previewSize, sensorOrientation);

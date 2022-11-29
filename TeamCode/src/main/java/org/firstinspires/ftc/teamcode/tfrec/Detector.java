@@ -212,7 +212,11 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     }
 
     protected int getLayoutId() {
-        return R.layout.tfe_ic_camera_connection_fragment;
+        /*
+       tfe_ic does not work for what ever reason. Trying to fix by commenting it out
+        */
+        //return R.layout.tfe_ic_camera_connection_fragment;
+        return R.layout.webcam_device;
     }
 
     protected Size getDesiredPreviewFrameSize() {

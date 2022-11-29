@@ -37,14 +37,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.bots.DummyBot;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
 
 import java.util.List;
 
 //Opmode for quick testing of motors
-@TeleOp(name="TFDetector", group="Robot15173")
+@TeleOp(name="TFDetector", group="Competition")
 @Disabled
 @Deprecated
 public class DetectorTest extends LinearOpMode{
@@ -53,7 +52,7 @@ public class DetectorTest extends LinearOpMode{
     private Detector tfDetector = null;
     private ElapsedTime runtime = new ElapsedTime();
 
-    private static String MODEL_FILE_NAME = "rings_float.tflite";
+    private static String MODEL_FILE_NAME = "CustomSleve.tflite";
     private static String LABEL_FILE_NAME = "labels.txt";
     private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
 
