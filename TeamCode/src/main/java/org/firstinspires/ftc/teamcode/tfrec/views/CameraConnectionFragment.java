@@ -302,7 +302,7 @@ public class CameraConnectionFragment extends Fragment {
     }
 
     public void setCamera(String cameraId) {
-        this.cameraId = cameraId;
+        this.cameraId = "Webcam";
     }
 
     /** Sets up member variables related to camera. */
