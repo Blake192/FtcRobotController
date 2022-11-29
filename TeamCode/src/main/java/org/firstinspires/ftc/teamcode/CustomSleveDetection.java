@@ -88,23 +88,13 @@ public class CustomSleveDetection extends LinearOpMode {
         telemetry.addData(">", "Vuforia has INIT");
         telemetry.update();
 
+        //TODO: Take image from Vuforia
+
+
         // Default Images for Teachable machine are 224 x 224 pixels
 
+        //TODO: Create the Implementation of the TFlite model
 
-
-
-
-        /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start op mode");
-        telemetry.update();
-        //FtcDashboard.getInstance().startCameraStream(vuforia, 0);
-        waitForStart();
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-                //TODO: Create the Implementation of the TFlite model
-                //TODO: Take image from Vuforia
 
                 /*
                 try {
@@ -128,6 +118,18 @@ public class CustomSleveDetection extends LinearOpMode {
                     telemetry.addData(">","Something Broke");
                 }
                 */
+
+
+
+        /** Wait for the game to begin */
+        telemetry.addData(">", "Press Play to start op mode");
+        telemetry.update();
+        FtcDashboard.getInstance().startCameraStream(vuforia, 0);
+        waitForStart();
+
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+
 
             }
         }
