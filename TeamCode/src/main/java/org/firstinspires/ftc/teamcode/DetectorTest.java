@@ -53,7 +53,7 @@ public class DetectorTest extends LinearOpMode{
     private Detector tfDetector = null;
     private ElapsedTime runtime = new ElapsedTime();
 
-    private static String MODEL_FILE_NAME = "rings_float.tflite";
+    private static String MODEL_FILE_NAME = "/sdcard/FIRST/tflitemodels/SleveImageDetection.tflite";
     private static String LABEL_FILE_NAME = "labels.txt";
     private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
 
