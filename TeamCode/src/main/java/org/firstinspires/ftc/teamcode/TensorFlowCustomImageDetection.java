@@ -157,7 +157,7 @@ public class TensorFlowCustomImageDetection extends LinearOpMode {
                 */
 
                 try (Interpreter interpreter = new Interpreter(new File(TFOD_MODEL_FILE))) {
-                    interpreter.allocateTensors();
+
                     interpreter.run(vuforia, LABELS);
                     telemetry.addData("Image Detected:", interpreter.getOutputTensorCount());
                 }
