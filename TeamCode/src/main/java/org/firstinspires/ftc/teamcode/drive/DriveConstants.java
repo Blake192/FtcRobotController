@@ -56,7 +56,7 @@ public class DriveConstants {
      */
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
     public static double kA = 0;
-    public static double kStatic = 0; // Alex said static is 600 for our encoders??
+    public static double kStatic = 0;
 
 
     /*
