@@ -199,7 +199,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
                             getLayoutId(),
                             getDesiredPreviewFrameSize(), telemetry);
 
-            camera2Fragment.setCamera("Webcam");
+            camera2Fragment.setCamera(this.cameraId);
             fragment = camera2Fragment;
         } else {
             fragment =
@@ -215,8 +215,8 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
         /*
        tfe_ic does not work for what ever reason. Trying to fix by commenting it out
         */
-        //return R.layout.tfe_ic_camera_connection_fragment;
-        return R.layout.webcam_device;
+        return R.layout.tfe_ic_camera_connection_fragment;
+        //return R.layout.webcam_device;
     }
 
     protected Size getDesiredPreviewFrameSize() {
