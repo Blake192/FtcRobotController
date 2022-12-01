@@ -41,6 +41,7 @@ import java.util.ArrayList;
 
 public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
+    /*
     private ElapsedTime runtime = new ElapsedTime();
     DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
     DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
@@ -49,6 +50,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     DcMotor lift = hardwareMap.dcMotor.get("lift");
     private Servo servoLeft;
     private Servo servoRight;
+     */
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
