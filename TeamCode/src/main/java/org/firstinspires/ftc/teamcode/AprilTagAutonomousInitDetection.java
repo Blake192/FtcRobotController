@@ -24,6 +24,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -38,6 +41,14 @@ import java.util.ArrayList;
 
 public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
+    private ElapsedTime runtime = new ElapsedTime();
+    DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+    DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+    DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+    DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+    DcMotor lift = hardwareMap.dcMotor.get("lift");
+    private Servo servoLeft;
+    private Servo servoRight;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 

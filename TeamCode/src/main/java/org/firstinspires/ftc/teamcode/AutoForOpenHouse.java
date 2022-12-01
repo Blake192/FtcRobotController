@@ -75,6 +75,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name="Open House Auto Program F5 and A2", group="Open House")
+@Deprecated
 
 public class AutoForOpenHouse extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
