@@ -208,59 +208,56 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
+        while (opModeIsActive()) {
+            /* Actually do something useful */
+            if (tagOfInterest == null) {
+                /*
+                 * Insert your autonomous code here, presumably running some default configuration
+                 * since the tag was never sighted during INIT
+                 */
 
 
+            } else {
+                /*
+                 * Insert your autonomous code here, probably using the tag pose to decide your configuration.
+                 */
 
-        }
-        else
-        {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
+                // e.g.
+                if (tagOfInterest.pose.x <= 20) {
 
-            // e.g.
-            if(tagOfInterest.pose.x <= 20){
+                    if (tagOfInterest.id == 17) {
+                        //Run auto for Image 1
+                        telemetry.addData(">", "Running Auto for Image 1");
+                        telemetry.update();
 
-                if(tagOfInterest.id == 17){
-                    //Run auto for Image 1
-                    telemetry.addData(">", "Running Auto for Image 1");
+                        //Move to Area 1
 
-                    //Move to Area 1
+                    } else if (tagOfInterest.id == 18) {
+                        //Run auto for Image 2
+                        telemetry.addData(">", "Running Auto for Image 2");
+                        telemetry.update();
 
+                        //Move to Area 2
+
+                    } else if (tagOfInterest.id == 19) {
+                        //Run auto for Image 3
+                        telemetry.addData(">", "Running Auto for Image 3");
+                        telemetry.update();
+
+                        //Move to Area 3
+
+                    }
+
+                } else {
+                    telemetry.addData(">", "Detected Other Teams April Tag");
                 }
-                else if(tagOfInterest.id == 18){
-                    //Run auto for Image 2
-                    telemetry.addData(">", "Running Auto for Image 2");
 
-                    //Move to Area 2
-
-                }
-                else if(tagOfInterest.id == 19){
-                    //Run auto for Image 3
-                    telemetry.addData(">", "Running Auto for Image 3");
-
-                    //Move to Area 3
-
-                }
 
             }
-            else{
-                telemetry.addData(">", "Detected Other Teams April Tag");
-            }
-
-
         }
 
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+
     }
 
     void tagToTelemetry(AprilTagDetection detection)
