@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
@@ -21,11 +19,11 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 
 
-@TeleOp(name = "Localization Test 9108", group = "Linear Opmode")
+@TeleOp(name = "TeleOp 9108", group = "Linear Opmode")
 
 
 
-public class LocalizationTest9108 extends LinearOpMode {
+public class TeleOp9108 extends LinearOpMode {
     // Custom for lift
     //private DcMotorEx lift;
     // Custom for claw
