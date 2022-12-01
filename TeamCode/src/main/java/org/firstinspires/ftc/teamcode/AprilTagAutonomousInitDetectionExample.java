@@ -107,13 +107,13 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                         tag1Found = true;
                         break;
                     }
-                    if(tag.id == ID_TAG_OF_INTEREST2)
+                    else if(tag.id == ID_TAG_OF_INTEREST2)
                     {
                         tagOfInterest = tag;
                         tag2Found = true;
                         break;
                     }
-                    if(tag.id == ID_TAG_OF_INTEREST3)
+                    else if(tag.id == ID_TAG_OF_INTEREST3)
                     {
                         tagOfInterest = tag;
                         tag3Found = true;
@@ -127,12 +127,12 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
-                if(tag2Found)
+                else if(tag2Found)
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
-                if(tag3Found)
+                else if(tag3Found)
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
@@ -200,6 +200,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
              * Insert your autonomous code here, presumably running some default configuration
              * since the tag was never sighted during INIT
              */
+            
+
+
         }
         else
         {
@@ -208,18 +211,24 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
              */
 
             // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
+            if(tagOfInterest.pose.x <= 20){
+
+                if(tagOfInterest.id == 18){
+
+                }
+                else if(tagOfInterest.id == 19){
+
+                }
+                else if(tagOfInterest.id == 20){
+
+                }
+
             }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
+            else{
+                telemetry.addData(">", "Detected Other Teams April Tag");
             }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
-            }
+
+
         }
 
 
