@@ -53,7 +53,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST1 = 18;
+    int ID_TAG_OF_INTEREST2 = 19;
+    int ID_TAG_OF_INTEREST3 = 20; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -61,7 +63,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     public void runOpMode()
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
@@ -92,23 +94,51 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
             if(currentDetections.size() != 0)
             {
-                boolean tagFound = false;
+                boolean tag1Found = false;
+                boolean tag2Found = false;
+                boolean tag3Found = false;
+
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST)
+                    if(tag.id == ID_TAG_OF_INTEREST1)
                     {
                         tagOfInterest = tag;
-                        tagFound = true;
+                        tag1Found = true;
                         break;
                     }
+                    if(tag.id == ID_TAG_OF_INTEREST2)
+                    {
+                        tagOfInterest = tag;
+                        tag2Found = true;
+                        break;
+                    }
+                    if(tag.id == ID_TAG_OF_INTEREST3)
+                    {
+                        tagOfInterest = tag;
+                        tag3Found = true;
+                        break;
+                    }
+
                 }
 
-                if(tagFound)
+                if(tag1Found)
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 }
+                if(tag2Found)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+                if(tag3Found)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+
                 else
                 {
                     telemetry.addLine("Don't see tag of interest :(");
