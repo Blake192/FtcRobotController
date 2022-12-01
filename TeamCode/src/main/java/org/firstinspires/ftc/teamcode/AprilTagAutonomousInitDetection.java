@@ -24,6 +24,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -38,6 +41,16 @@ import java.util.ArrayList;
 
 public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
+    /*
+    private ElapsedTime runtime = new ElapsedTime();
+    DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+    DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+    DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+    DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+    DcMotor lift = hardwareMap.dcMotor.get("lift");
+    private Servo servoLeft;
+    private Servo servoRight;
+     */
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -55,9 +68,9 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST1 = 18;
-    int ID_TAG_OF_INTEREST2 = 19;
-    int ID_TAG_OF_INTEREST3 = 20; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST1 = 17;
+    int ID_TAG_OF_INTEREST2 = 18;
+    int ID_TAG_OF_INTEREST3 = 19; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -195,53 +208,56 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
+        while (opModeIsActive()) {
+            /* Actually do something useful */
+            if (tagOfInterest == null) {
+                /*
+                 * Insert your autonomous code here, presumably running some default configuration
+                 * since the tag was never sighted during INIT
+                 */
 
 
+            } else {
+                /*
+                 * Insert your autonomous code here, probably using the tag pose to decide your configuration.
+                 */
 
-        }
-        else
-        {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
+                // e.g.
+                if (tagOfInterest.pose.x <= 20) {
 
-            // e.g.
-            if(tagOfInterest.pose.x <= 20){
+                    if (tagOfInterest.id == 17) {
+                        //Run auto for Image 1
+                        telemetry.addData(">", "Running Auto for Image 1");
+                        telemetry.update();
 
-                if(tagOfInterest.id == 18){
-                    //Run auto for Image 1
-                    telemetry.addData(">", "Running Auto for Image 1");
+                        //Move to Area 1
 
+                    } else if (tagOfInterest.id == 18) {
+                        //Run auto for Image 2
+                        telemetry.addData(">", "Running Auto for Image 2");
+                        telemetry.update();
+
+                        //Move to Area 2
+
+                    } else if (tagOfInterest.id == 19) {
+                        //Run auto for Image 3
+                        telemetry.addData(">", "Running Auto for Image 3");
+                        telemetry.update();
+
+                        //Move to Area 3
+
+                    }
+
+                } else {
+                    telemetry.addData(">", "Detected Other Teams April Tag");
                 }
-                else if(tagOfInterest.id == 19){
-                    //Run auto for Image 2
-                    telemetry.addData(">", "Running Auto for Image 2");
 
-                }
-                else if(tagOfInterest.id == 20){
-                    //Run auto for Image 3
-                    telemetry.addData(">", "Running Auto for Image 3");
-
-                }
 
             }
-            else{
-                telemetry.addData(">", "Detected Other Teams April Tag");
-            }
-
-
         }
 
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+
     }
 
     void tagToTelemetry(AprilTagDetection detection)

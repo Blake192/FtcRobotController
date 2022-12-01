@@ -75,7 +75,7 @@ import com.qualcomm.robotcore.util.Range;
 
 
 @Autonomous(name="Open House Auto Program A5 and F2", group="Open House")
-
+@Deprecated
 
 
 

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 
 
-@TeleOp(name = "TeleOp 9108", group = "Linear Opmode")
+@TeleOp(name = "TeleOp 9108", group = "Competition")
 
 
 
