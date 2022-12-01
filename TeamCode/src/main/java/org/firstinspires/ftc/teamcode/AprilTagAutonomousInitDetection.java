@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -33,8 +34,9 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+@Autonomous(name="AprilTag Image Detection Auto", group="Competition")
+
+public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -200,7 +202,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
              * Insert your autonomous code here, presumably running some default configuration
              * since the tag was never sighted during INIT
              */
-            
+
 
 
         }
@@ -214,12 +216,18 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             if(tagOfInterest.pose.x <= 20){
 
                 if(tagOfInterest.id == 18){
+                    //Run auto for Image 1
+                    telemetry.addData(">", "Running Auto for Image 1");
 
                 }
                 else if(tagOfInterest.id == 19){
+                    //Run auto for Image 2
+                    telemetry.addData(">", "Running Auto for Image 2");
 
                 }
                 else if(tagOfInterest.id == 20){
+                    //Run auto for Image 3
+                    telemetry.addData(">", "Running Auto for Image 3");
 
                 }
 
