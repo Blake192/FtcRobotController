@@ -55,9 +55,9 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST1 = 18;
-    int ID_TAG_OF_INTEREST2 = 19;
-    int ID_TAG_OF_INTEREST3 = 20; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST1 = 17;
+    int ID_TAG_OF_INTEREST2 = 18;
+    int ID_TAG_OF_INTEREST3 = 19; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -215,19 +215,25 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             // e.g.
             if(tagOfInterest.pose.x <= 20){
 
-                if(tagOfInterest.id == 18){
+                if(tagOfInterest.id == 17){
                     //Run auto for Image 1
                     telemetry.addData(">", "Running Auto for Image 1");
 
+                    //Move to Area 1
+
                 }
-                else if(tagOfInterest.id == 19){
+                else if(tagOfInterest.id == 18){
                     //Run auto for Image 2
                     telemetry.addData(">", "Running Auto for Image 2");
 
+                    //Move to Area 2
+
                 }
-                else if(tagOfInterest.id == 20){
+                else if(tagOfInterest.id == 19){
                     //Run auto for Image 3
                     telemetry.addData(">", "Running Auto for Image 3");
+
+                    //Move to Area 3
 
                 }
 
