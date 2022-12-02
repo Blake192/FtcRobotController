@@ -100,7 +100,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
 //            telemetry.update();
 
             while (gamepad2.left_trigger > 0.05 && gamepad2.right_trigger < 0.05) { // Raise up on right trigger
-//                lift.setTargetPosition(lift.getCurrentPosition()+100);
+//                lift.setTargetPosition(lift.get CurrentPosition()+100);
                 lift.setPower(1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
 
@@ -112,7 +112,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
             }
 
-            if (gamepad2.left_trigger < 0.05 && gamepad2.right_trigger < 0.05) {
+            if (gamepad2.left_trigger < 0.05 && gamepad2.right_trigger < 0.05) { // neither pressed
 //                lift.setTargetPosition(lift.getCurrentPosition());
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
                 lift.setPower(0);
@@ -121,9 +121,9 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
             float closeDistance = 1.0f;
             float openDistance = 0.6f;
 
-            // Right trigger controller 2
+            // Right trigger co ntroller 2
             // Starts closed with cone and clawInvertRight = true
-            while (gamepad1.right_trigger > 0.05 && !clawInvertRight && gamepad1.left_trigger < 0.05) {
+            while (gamepad2.right_bumper && !clawInvertRight && !gamepad2.left_bumper) {
                 // Servo only go 0 to 1
 
                 servoRight.setPosition(closeDistance); // Close
@@ -131,7 +131,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
                 clawInvertRight = !clawInvertRight;
             }
 
-            while (gamepad1.left_trigger > 0.05 && clawInvertRight && gamepad1.right_trigger < 0.05) {
+            while (gamepad2.left_bumper && clawInvertRight && !gamepad2.right_bumper) {
                 servoRight.setPosition(openDistance); // Open
                 servoLeft.setPosition(1.0f - openDistance); // Open
                 clawInvertRight = !clawInvertRight;

@@ -103,7 +103,7 @@ public class TeleOp9108 extends LinearOpMode {
 //            telemetry.update();
 
             while (gamepad1.left_trigger > 0.05 && gamepad1.right_trigger < 0.05) { // Raise up on right trigger
-//                lift.setTargetPosition(lift.getCurrentPosition()+100);
+//                lift.setTargetPosition(lift.get CurrentPosition()+100);
                 lift.setPower(1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
 
