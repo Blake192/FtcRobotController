@@ -230,21 +230,30 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                         telemetry.addData(">", "Running Auto for Image 1");
                         telemetry.update();
 
-                        //Move to Area 1
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 1 ~ 10 seconds
 
                     } else if (tagOfInterest.id == 18) {
                         //Run auto for Image 2
                         telemetry.addData(">", "Running Auto for Image 2");
                         telemetry.update();
 
-                        //Move to Area 2
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 2 ~ 10 seconds
 
                     } else if (tagOfInterest.id == 19) {
                         //Run auto for Image 3
                         telemetry.addData(">", "Running Auto for Image 3");
                         telemetry.update();
 
-                        //Move to Area 3
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 3 ~ 10 seconds
 
                     }
 
