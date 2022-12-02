@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -21,11 +18,11 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 
 
-@TeleOp(name = "TeleOp 9108", group = "Competition")
+@TeleOp(name = "Two Player TeleOp 9108", group = "Competition")
 
 
 
-public class TeleOp9108 extends LinearOpMode {
+public class TwoPlayerTeleOp9108 extends LinearOpMode {
     // Custom for lift
     //private DcMotorEx lift;
     // Custom for claw
@@ -102,20 +99,20 @@ public class TeleOp9108 extends LinearOpMode {
 //
 //            telemetry.update();
 
-            while (gamepad1.left_trigger > 0.05 && gamepad1.right_trigger < 0.05) { // Raise up on right trigger
+            while (gamepad2.left_trigger > 0.05 && gamepad2.right_trigger < 0.05) { // Raise up on right trigger
 //                lift.setTargetPosition(lift.getCurrentPosition()+100);
                 lift.setPower(1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
 
             }
 
-            while (gamepad1.right_trigger > 0.05 && gamepad1.left_trigger < 0.05) {
+            while (gamepad2.right_trigger > 0.05 && gamepad2.left_trigger < 0.05) {
 //                lift.setTargetPosition(lift.getCurrentPosition()-100);
                 lift.setPower(-1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
             }
 
-            if (gamepad1.left_trigger < 0.05 && gamepad1.right_trigger < 0.05) { // neither pressed
+            if (gamepad2.left_trigger < 0.05 && gamepad2.right_trigger < 0.05) {
 //                lift.setTargetPosition(lift.getCurrentPosition());
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
                 lift.setPower(0);
@@ -126,7 +123,7 @@ public class TeleOp9108 extends LinearOpMode {
 
             // Right trigger controller 2
             // Starts closed with cone and clawInvertRight = true
-            while (gamepad1.right_bumper && !clawInvertRight && !gamepad1.left_bumper) {
+            while (gamepad1.right_trigger > 0.05 && !clawInvertRight && gamepad1.left_trigger < 0.05) {
                 // Servo only go 0 to 1
 
                 servoRight.setPosition(closeDistance); // Close
@@ -134,7 +131,7 @@ public class TeleOp9108 extends LinearOpMode {
                 clawInvertRight = !clawInvertRight;
             }
 
-            while (gamepad1.left_bumper && clawInvertRight && !gamepad1.right_bumper) {
+            while (gamepad1.left_trigger > 0.05 && clawInvertRight && gamepad1.right_trigger < 0.05) {
                 servoRight.setPosition(openDistance); // Open
                 servoLeft.setPosition(1.0f - openDistance); // Open
                 clawInvertRight = !clawInvertRight;
