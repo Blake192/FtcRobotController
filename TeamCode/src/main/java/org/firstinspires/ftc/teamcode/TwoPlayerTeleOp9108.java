@@ -121,7 +121,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
             float closeDistance = 1.0f;
             float openDistance = 0.6f;
 
-            // Right trigger co ntroller 2
+            // Right trigger controller 2
             // Starts closed with cone and clawInvertRight = true
             while (gamepad2.right_bumper && !clawInvertRight && !gamepad2.left_bumper) {
                 // Servo only go 0 to 1

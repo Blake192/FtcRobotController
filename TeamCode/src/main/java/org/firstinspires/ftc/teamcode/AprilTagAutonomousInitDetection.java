@@ -25,7 +25,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -43,6 +45,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
 import java.util.ArrayList;
 
 @Autonomous(name="AprilTag Image Detection Auto", group="Competition")
@@ -55,12 +58,13 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
     DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
     DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-    DcMotor lift = hardwareMap.dcMotor.get("lift");
-    private Servo servoLeft;
-    private Servo servoRight;
-     */
+    */
+    public DcMotorEx lift;
+    public ServoImplEx servoLeft;
+    public ServoImplEx servoRight;
 
-    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+
 
 
 
@@ -91,16 +95,35 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+
+        // Needed for internal run to position PIDs
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Lift will suspend in midair rather than coasting when at 0 power
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        servoLeft = hardwareMap.get(ServoImplEx.class, "servoLeft");
+        servoRight = hardwareMap.get(ServoImplEx.class, "servoRight");
+
+        servoLeft.setPwmEnable();
+        servoRight.setPwmEnable();
+
+
+        // put in run opmode
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
         Trajectory location1 = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(20).forward(63)
+                .strafeLeft(20d).forward(63d)
                 .build();
 
         Trajectory location2 = drive.trajectoryBuilder(new Pose2d())
-                .forward(63).build();
+                .forward(63d).build();
 
         Trajectory location3 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(20).forward(63)
+                .strafeRight(20d).forward(63d)
                 .build();
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
@@ -240,6 +263,10 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                  * Insert your autonomous code here, presumably running some default configuration
                  * since the tag was never sighted during INIT
                  */
+                // Just in case go to location 1 if it fails
+                drive.followTrajectory(location2);
+                telemetry.addData("It failed, going to location 2 (Straight)", "");
+                telemetry.update();
 
 
             } else {
