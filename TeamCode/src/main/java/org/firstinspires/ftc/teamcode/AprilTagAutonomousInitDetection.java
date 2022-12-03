@@ -34,7 +34,15 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.ArrayList;
 
 @Autonomous(name="AprilTag Image Detection Auto", group="Competition")
@@ -51,6 +59,12 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     private Servo servoLeft;
     private Servo servoRight;
      */
+
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+
+
+
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -77,6 +91,17 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        Trajectory location1 = drive.trajectoryBuilder(new Pose2d())
+                .strafeLeft(20).forward(63)
+                .build();
+
+        Trajectory location2 = drive.trajectoryBuilder(new Pose2d())
+                .forward(63).build();
+
+        Trajectory location3 = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(20).forward(63)
+                .build();
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -234,6 +259,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 1 ~ 10 seconds
+                        drive.followTrajectory(location1);
 
                     } else if (tagOfInterest.id == 18) {
                         //Run auto for Image 2
@@ -244,7 +270,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 2 ~ 10 seconds
-
+                        drive.followTrajectory(location2);
                     } else if (tagOfInterest.id == 19) {
                         //Run auto for Image 3
                         telemetry.addData(">", "Running Auto for Image 3");
@@ -254,7 +280,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 3 ~ 10 seconds
-
+                        drive.followTrajectory(location3);
                     }
 
                 } else {
