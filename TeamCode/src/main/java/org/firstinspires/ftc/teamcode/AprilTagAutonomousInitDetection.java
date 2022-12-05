@@ -31,6 +31,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -112,17 +113,47 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
         // put in run opmode
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//
+//        Trajectory location1Part1 = drive.trajectoryBuilder(new Pose2d())
+//                .forward(63d)
+//                .build();
+        double forwardDistance = 68;
+        double strafeDistane = 54 ;
 
-        Trajectory location1 = drive.trajectoryBuilder(new Pose2d())
-                .strafeLeft(20d).forward(63d)
+        // Use to go to tile 2
+        forwardDistance = forwardDistance/1.5;
+        forwardDistance = forwardDistance + 2;
+
+        TrajectorySequence location1 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(strafeDistane)
+//                .turn(10)
+                .forward(forwardDistance)
+//                .waitSeconds(2)
+
+//                .waitSeconds(1)
                 .build();
 
-        Trajectory location2 = drive.trajectoryBuilder(new Pose2d())
-                .forward(63d).build();
+//        Trajectory location1Part2 = drive.trajectoryBuilder(new Pose2d()).strafeLeft(40d).build();
 
-        Trajectory location3 = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(20d).forward(63d)
+
+        TrajectorySequence location2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(forwardDistance+4)
+//                .waitSeconds(1)
                 .build();
+
+        TrajectorySequence location3 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeRight(strafeDistane-8)
+                .forward(forwardDistance-8)
+//                .waitSeconds(2)
+
+//                .waitSeconds(1)
+                .build();
+
+//        Trajectory location3Part1 = drive.trajectoryBuilder(new Pose2d())
+//                .forward(63d)
+//                .build();
+//        Trajectory location3Part2 = drive.trajectoryBuilder(new Pose2d()).strafeRight(40d).build();
+
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -255,7 +286,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
+        boolean hasRun = false;
         while (opModeIsActive()) {
             /* Actually do something useful */
             if (tagOfInterest == null) {
@@ -264,11 +295,14 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                  * since the tag was never sighted during INIT
                  */
                 // Just in case go to location 1 if it fails
-                drive.followTrajectory(location2);
-                telemetry.addData("It failed, going to location 2 (Straight)", "");
-                telemetry.update();
+//                drive.followTrajectory(location2);
+//                telemetry.addData("It failed, going to location 2 (Straight)", "");
+//                telemetry.update();
 
-
+                  if(hasRun == true) {
+                      break;
+                  }
+                  hasRun = true;
             } else {
                 /*
                  * Insert your autonomous code here, probably using the tag pose to decide your configuration.
@@ -277,7 +311,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                 // e.g.
                 if (tagOfInterest.pose.x <= 20) {
 
-                    if (tagOfInterest.id == 17) {
+                    if (tagOfInterest.id == 17 && hasRun == false) {
                         //Run auto for Image 1
                         telemetry.addData(">", "Running Auto for Image 1");
                         telemetry.update();
@@ -286,9 +320,9 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 1 ~ 10 seconds
-                        drive.followTrajectory(location1);
-
-                    } else if (tagOfInterest.id == 18) {
+                        drive.followTrajectorySequence(location1);
+                        hasRun = true;
+                    } else if (tagOfInterest.id == 18 && hasRun == false) {
                         //Run auto for Image 2
                         telemetry.addData(">", "Running Auto for Image 2");
                         telemetry.update();
@@ -297,8 +331,9 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 2 ~ 10 seconds
-                        drive.followTrajectory(location2);
-                    } else if (tagOfInterest.id == 19) {
+                        drive.followTrajectorySequence(location2);
+                        hasRun = true;
+                    } else if (tagOfInterest.id == 19 && hasRun == false) {
                         //Run auto for Image 3
                         telemetry.addData(">", "Running Auto for Image 3");
                         telemetry.update();
@@ -307,7 +342,10 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
                         //Move to Area 3 ~ 10 seconds
-                        drive.followTrajectory(location3);
+                        drive.followTrajectorySequence(location3);
+
+
+                        hasRun = true;
                     }
 
                 } else {
