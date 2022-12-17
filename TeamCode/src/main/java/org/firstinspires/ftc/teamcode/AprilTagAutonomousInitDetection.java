@@ -23,12 +23,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -36,14 +33,8 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -91,7 +82,8 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     int ID_TAG_OF_INTEREST2 = 18;
     int ID_TAG_OF_INTEREST3 = 19; // Tag ID 18 from the 36h11 family
 
-    AprilTagDetection tagOfInterest = null;
+    AprilTagDetection tagOfInterestLeft = null;
+    AprilTagDetection tagOfInterestRight = null;
 
     @Override
     public void runOpMode()
@@ -157,16 +149,35 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        webcamLeft = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Left"), cameraMonitorViewId);
+        webcamRight =  OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam Right"), cameraMonitorViewId);
 
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        aprilTagDetectionPipelineLeft = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        aprilTagDetectionPipelineRight = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        webcamLeft.setPipeline(aprilTagDetectionPipelineLeft);
+        webcamRight.setPipeline(aprilTagDetectionPipelineRight);
+
+        webcamLeft.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                webcamLeft.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
+        webcamRight.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcamRight.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -184,7 +195,8 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
          */
         while (!isStarted() && !isStopRequested())
         {
-            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+            // Left webcam
+            ArrayList<AprilTagDetection> currentDetections1 = aprilTagDetectionPipelineLeft.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
@@ -197,19 +209,19 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                 {
                     if(tag.id == ID_TAG_OF_INTEREST1)
                     {
-                        tagOfInterest = tag;
+                        tagOfInterestLeft = tag;
                         tag1Found = true;
                         break;
                     }
                     else if(tag.id == ID_TAG_OF_INTEREST2)
                     {
-                        tagOfInterest = tag;
+                        tagOfInterestLeft = tag;
                         tag2Found = true;
                         break;
                     }
                     else if(tag.id == ID_TAG_OF_INTEREST3)
                     {
-                        tagOfInterest = tag;
+                        tagOfInterestLeft = tag;
                         tag3Found = true;
                         break;
                     }
@@ -218,18 +230,103 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
                 if(tag1Found)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+                    telemetry.addLine("Left webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestLeft);
                 }
                 else if(tag2Found)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+                    telemetry.addLine("Left webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestLeft);
                 }
                 else if(tag3Found)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+                    telemetry.addLine("Left webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestLeft);
+                }
+
+
+                else
+                {
+                    telemetry.addLine("Left webcam: Don't see tag of interest :(");
+
+                    if(tagOfInterestLeft == null)
+                    {
+                        telemetry.addLine("Left webcam: (The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nLeft webcam: But we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterestLeft);
+                    }
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Left webcam: Don't see tag of interest :(");
+
+                if(tagOfInterestLeft == null)
+                {
+                    telemetry.addLine("Left webcam: (The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nLeft webcam: But we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterestLeft);
+                }
+
+            }
+
+            telemetry.update();
+            sleep(20);
+
+            // Right webcam
+            ArrayList<AprilTagDetection> currentDetectionsRight = aprilTagDetectionPipelineRight.getLatestDetections();
+
+            if(currentDetectionsRight.size() != 0)
+            {
+                boolean tag1Found = false;
+                boolean tag2Found = false;
+                boolean tag3Found = false;
+
+
+                for(AprilTagDetection tag : currentDetectionsRight)
+                {
+                    if(tag.id == ID_TAG_OF_INTEREST1)
+                    {
+                        tagOfInterestRight = tag;
+                        tag1Found = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST2)
+                    {
+                        tagOfInterestRight = tag;
+                        tag2Found = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST3)
+                    {
+                        tagOfInterestRight = tag;
+                        tag3Found = true;
+                        break;
+                    }
+
+                }
+
+                if(tag1Found)
+                {
+                    telemetry.addLine("Right webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestRight);
+                }
+                else if(tag2Found)
+                {
+                    telemetry.addLine("Right webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestRight);
+                }
+                else if(tag3Found)
+                {
+                    telemetry.addLine("Right webcam: Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterestRight);
                 }
 
 
@@ -237,30 +334,30 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                 {
                     telemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
+                    if(tagOfInterestRight == null)
                     {
-                        telemetry.addLine("(The tag has never been seen)");
+                        telemetry.addLine("Right webcam: (The tag has never been seen)");
                     }
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
+                        telemetry.addLine("\nRight webcam: But we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterestRight);
                     }
                 }
 
             }
             else
             {
-                telemetry.addLine("Don't see tag of interest :(");
+                telemetry.addLine("Right webcam: Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
+                if(tagOfInterestRight == null)
                 {
-                    telemetry.addLine("(The tag has never been seen)");
+                    telemetry.addLine("Right webcam: (The tag has never been seen)");
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
+                    telemetry.addLine("\nRight webcam: But we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterestRight);
                 }
 
             }
@@ -275,21 +372,35 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
+        if(tagOfInterestLeft != null)
         {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
+            telemetry.addLine("Left webcam: Tag snapshot:\n");
+            tagToTelemetry(tagOfInterestLeft);
             telemetry.update();
         }
+
         else
         {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.addLine("Left webcam: No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
+        }
+
+        if(tagOfInterestRight != null)
+        {
+            telemetry.addLine("Right webcam: Tag snapshot:\n");
+            tagToTelemetry(tagOfInterestRight);
+            telemetry.update();
+        }
+
+        else
+        {
+            telemetry.addLine("Right webcam:  No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
         boolean hasRun = false;
         while (opModeIsActive()) {
             /* Actually do something useful */
-            if (tagOfInterest == null) {
+            if (tagOfInterestLeft == null && tagOfInterestRight == null) {
                 /*
                  * Insert your autonomous code here, presumably running some default configuration
                  * since the tag was never sighted during INIT
@@ -309,9 +420,9 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                  */
 
                 // e.g.
-                if (tagOfInterest.pose.x <= 20) {
+                if (tagOfInterestLeft.pose.x <= 20 || tagOfInterestRight.pose.x <= 20) {
 
-                    if (tagOfInterest.id == 17 && hasRun == false) {
+                    if (tagOfInterestLeft.id == 17 || tagOfInterestRight.id == 17 && hasRun == false) {
                         //Run auto for Image 1
                         telemetry.addData(">", "Running Auto for Image 1");
                         telemetry.update();
@@ -322,7 +433,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                         //Move to Area 1 ~ 10 seconds
                         drive.followTrajectorySequence(location1);
                         hasRun = true;
-                    } else if (tagOfInterest.id == 18 && hasRun == false) {
+                    } else if (tagOfInterestLeft.id == 18 || tagOfInterestRight.id == 18 && hasRun == false) {
                         //Run auto for Image 2
                         telemetry.addData(">", "Running Auto for Image 2");
                         telemetry.update();
@@ -333,7 +444,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
                         //Move to Area 2 ~ 10 seconds
                         drive.followTrajectorySequence(location2);
                         hasRun = true;
-                    } else if (tagOfInterest.id == 19 && hasRun == false) {
+                    } else if (tagOfInterestLeft.id == 19 || tagOfInterestRight.id == 19 && hasRun == false) {
                         //Run auto for Image 3
                         telemetry.addData(">", "Running Auto for Image 3");
                         telemetry.update();
