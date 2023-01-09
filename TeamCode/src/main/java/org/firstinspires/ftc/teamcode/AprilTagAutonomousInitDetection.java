@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,19 +29,21 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
 import java.util.ArrayList;
 
+
+
 @Autonomous(name="AprilTag Image Detection Auto", group="Competition")
+
+
+
 
 public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
@@ -51,6 +54,8 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
     DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
     DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
     */
+
+
     public DcMotorEx lift;
     public ServoImplEx servoLeft;
     public ServoImplEx servoRight;
@@ -62,7 +67,13 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
 
     OpenCvCamera camera;
+    OpenCvCamera webcamLeft;
+    OpenCvCamera webcamRight;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    AprilTagDetectionPipeline aprilTagDetectionPipelineLeft;
+    AprilTagDetectionPipeline aprilTagDetectionPipelineRight;
+
+
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -198,14 +209,14 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             // Left webcam
             ArrayList<AprilTagDetection> currentDetections1 = aprilTagDetectionPipelineLeft.getLatestDetections();
 
-            if(currentDetections.size() != 0)
+            if(currentDetections1.size() != 0)
             {
                 boolean tag1Found = false;
                 boolean tag2Found = false;
                 boolean tag3Found = false;
 
 
-                for(AprilTagDetection tag : currentDetections)
+                for(AprilTagDetection tag : currentDetections1)
                 {
                     if(tag.id == ID_TAG_OF_INTEREST1)
                     {
@@ -481,4 +492,5 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
+
 }
