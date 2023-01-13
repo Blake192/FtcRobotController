@@ -22,6 +22,8 @@ public class DriveConstants {
      */
     public static final double TICKS_PER_REV = 537.7; // Set for Gobilda 5202 312 RPM
     // DONE: Changed to Gobilda 5202 for final bot
+
+//    gobilda 5203 series
     public static final double MAX_RPM = 312;
 
     /*
