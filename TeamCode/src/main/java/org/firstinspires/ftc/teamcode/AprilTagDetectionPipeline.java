@@ -21,292 +21,353 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfPoint3f;
-import org.opencv.core.Point;
-import org.opencv.core.Point3;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.apriltag.AprilTagDetectorJNI;
-import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.ArrayList;
 
-class AprilTagDetectionPipeline extends OpenCvPipeline
+@Autonomous(name="AprilTag Image Detection Auto", group="Competition")
+
+public class AprilTagAutonomousInitDetection extends LinearOpMode
 {
-    private long nativeApriltagPtr;
-    private Mat grey = new Mat();
-    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+    /*
+    private ElapsedTime runtime = new ElapsedTime();
+    DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+    DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+    DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+    DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+    */
+    public DcMotorEx lift;
+    public ServoImplEx servoLeft;
+    public ServoImplEx servoRight;
 
-    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
-    private final Object detectionsUpdateSync = new Object();
 
-    Mat cameraMatrix;
 
-    Scalar blue = new Scalar(7,197,235,255);
-    Scalar red = new Scalar(255,0,0,255);
-    Scalar green = new Scalar(0,255,0,255);
-    Scalar white = new Scalar(255,255,255,255);
 
-    double fx;
-    double fy;
-    double cx;
-    double cy;
+
+
+
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize;
-    double tagsizeX;
-    double tagsizeY;
+    double tagsize = 0.166;
 
-    private float decimation;
-    private boolean needToSetDecimation;
-    private final Object decimationSync = new Object();
+    int ID_TAG_OF_INTEREST1 = 17;
+    int ID_TAG_OF_INTEREST2 = 18;
+    int ID_TAG_OF_INTEREST3 = 19; // Tag ID 18 from the 36h11 family
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
-    {
-        this.tagsize = tagsize;
-        this.tagsizeX = tagsize;
-        this.tagsizeY = tagsize;
-        this.fx = fx;
-        this.fy = fy;
-        this.cx = cx;
-        this.cy = cy;
-
-        constructMatrix();
-
-        // Allocate a native context object. See the corresponding deletion in the finalizer
-        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
-    }
+    AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void finalize()
+    public void runOpMode()
     {
-        // Might be null if createApriltagDetector() threw an exception
-        if(nativeApriltagPtr != 0)
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+
+        // Needed for internal run to position PIDs
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Lift will suspend in midair rather than coasting when at 0 power
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        servoLeft = hardwareMap.get(ServoImplEx.class, "servoLeft");
+        servoRight = hardwareMap.get(ServoImplEx.class, "servoRight");
+
+        servoLeft.setPwmEnable();
+        servoRight.setPwmEnable();
+
+
+        // put in run opmode
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//
+//        Trajectory location1Part1 = drive.trajectoryBuilder(new Pose2d())
+//                .forward(63d)
+//                .build();
+        double forwardDistance = 68;
+        double strafeDistane = 54 ;
+
+        // Use to go to tile 2
+        forwardDistance = forwardDistance/1.5;
+        forwardDistance = forwardDistance + 2;
+
+        TrajectorySequence location1 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(strafeDistane)
+//                .turn(10)
+                .forward(forwardDistance)
+//                .waitSeconds(2)
+
+//                .waitSeconds(1)
+                .build();
+
+//        Trajectory location1Part2 = drive.trajectoryBuilder(new Pose2d()).strafeLeft(40d).build();
+
+
+        TrajectorySequence location2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(forwardDistance+4)
+//                .waitSeconds(1)
+                .build();
+
+        TrajectorySequence location3 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeRight(strafeDistane-8)
+                .forward(forwardDistance-8)
+//                .waitSeconds(2)
+
+//                .waitSeconds(1)
+                .build();
+
+//        Trajectory location3Part1 = drive.trajectoryBuilder(new Pose2d())
+//                .forward(63d)
+//                .build();
+//        Trajectory location3Part2 = drive.trajectoryBuilder(new Pose2d()).strafeRight(40d).build();
+
+
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
-            // Delete the native context we created in the constructor
-            AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
-            nativeApriltagPtr = 0;
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested())
+        {
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0)
+            {
+                boolean tag1Found = false;
+                boolean tag2Found = false;
+                boolean tag3Found = false;
+
+
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    if(tag.id == ID_TAG_OF_INTEREST1)
+                    {
+                        tagOfInterest = tag;
+                        tag1Found = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST2)
+                    {
+                        tagOfInterest = tag;
+                        tag2Found = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST3)
+                    {
+                        tagOfInterest = tag;
+                        tag3Found = true;
+                        break;
+                    }
+
+                }
+
+                if(tag1Found)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+                else if(tag2Found)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+                else if(tag3Found)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+
+            }
+
+            telemetry.update();
+            sleep(20);
+        }
+
+        /*
+         * The START command just came in: now work off the latest snapshot acquired
+         * during the init loop.
+         */
+
+        /* Update the telemetry */
+        if(tagOfInterest != null)
+        {
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
+            telemetry.update();
         }
         else
         {
-            System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
+            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
+            telemetry.update();
         }
-    }
+        boolean hasRun = false;
+        while (opModeIsActive()) {
+            /* Actually do something useful */
+            if (tagOfInterest == null) {
+                /*
+                 * Insert your autonomous code here, presumably running some default configuration
+                 * since the tag was never sighted during INIT
+                 */
+                // Just in case go to location 1 if it fails
+//                drive.followTrajectory(location2);
+//                telemetry.addData("It failed, going to location 2 (Straight)", "");
+//                telemetry.update();
 
-    @Override
-    public Mat processFrame(Mat input)
-    {
-        // Convert to greyscale
-        Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
+                  if(hasRun == true) {
+                      break;
+                  }
+                  hasRun = true;
+            } else {
+                /*
+                 * Insert your autonomous code here, probably using the tag pose to decide your configuration.
+                 */
 
-        synchronized (decimationSync)
-        {
-            if(needToSetDecimation)
-            {
-                AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
-                needToSetDecimation = false;
+                // e.g.
+                if (tagOfInterest.pose.x <= 20) {
+
+                    if (tagOfInterest.id == 17 && hasRun == false) {
+                        //Run auto for Image 1
+                        telemetry.addData(">", "Running Auto for Image 1");
+                        telemetry.update();
+
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 1 ~ 10 seconds
+                        drive.followTrajectorySequence(location1);
+                        hasRun = true;
+                    } else if (tagOfInterest.id == 18 && hasRun == false) {
+                        //Run auto for Image 2
+                        telemetry.addData(">", "Running Auto for Image 2");
+                        telemetry.update();
+
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 2 ~ 10 seconds
+                        drive.followTrajectorySequence(location2);
+                        hasRun = true;
+                    } else if (tagOfInterest.id == 19 && hasRun == false) {
+                        //Run auto for Image 3
+                        telemetry.addData(">", "Running Auto for Image 3");
+                        telemetry.update();
+
+                        //Do auto Code ~ 20 seconds
+
+
+                        //Move to Area 3 ~ 10 seconds
+                        drive.followTrajectorySequence(location3);
+
+
+                        hasRun = true;
+                    }
+
+                } else {
+                    telemetry.addData(">", "Detected Other Teams April Tag");
+                }
+
+
             }
         }
 
-        // Run AprilTag
-        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
 
-        synchronized (detectionsUpdateSync)
-        {
-            detectionsUpdate = detections;
-        }
 
-        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
-        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        for(AprilTagDetection detection : detections)
-        {
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
-        }
-
-        return input;
     }
 
-    public void setDecimation(float decimation)
+    void tagToTelemetry(AprilTagDetection detection)
     {
-        synchronized (decimationSync)
-        {
-            this.decimation = decimation;
-            needToSetDecimation = true;
-        }
-    }
-
-    public ArrayList<AprilTagDetection> getLatestDetections()
-    {
-        return detections;
-    }
-
-    public ArrayList<AprilTagDetection> getDetectionsUpdate()
-    {
-        synchronized (detectionsUpdateSync)
-        {
-            ArrayList<AprilTagDetection> ret = detectionsUpdate;
-            detectionsUpdate = null;
-            return ret;
-        }
-    }
-
-    void constructMatrix()
-    {
-        //     Construct the camera matrix.
-        //
-        //      --         --
-        //     | fx   0   cx |
-        //     | 0    fy  cy |
-        //     | 0    0   1  |
-        //      --         --
-        //
-
-        cameraMatrix = new Mat(3,3, CvType.CV_32FC1);
-
-        cameraMatrix.put(0,0, fx);
-        cameraMatrix.put(0,1,0);
-        cameraMatrix.put(0,2, cx);
-
-        cameraMatrix.put(1,0,0);
-        cameraMatrix.put(1,1,fy);
-        cameraMatrix.put(1,2,cy);
-
-        cameraMatrix.put(2, 0, 0);
-        cameraMatrix.put(2,1,0);
-        cameraMatrix.put(2,2,1);
-    }
-
-    /**
-     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
-     *
-     * @param buf the RGB buffer on which to draw the marker
-     * @param length the length of each of the marker 'poles'
-     * @param rvec the rotation vector of the detection
-     * @param tvec the translation vector of the detection
-     * @param cameraMatrix the camera matrix used when finding the detection
-     */
-    void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
-        MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(0,0,0),
-                new Point3(length,0,0),
-                new Point3(0,length,0),
-                new Point3(0,0,-length)
-        );
-
-        // Project those points
-        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
-        Point[] projectedPoints = matProjectedPoints.toArray();
-
-        // Draw the marker!
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[1], red, thickness);
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[2], green, thickness);
-        Imgproc.line(buf, projectedPoints[0], projectedPoints[3], blue, thickness);
-
-        Imgproc.circle(buf, projectedPoints[0], thickness, white, -1);
-    }
-
-    void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
-    {
-        //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
-        //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
-
-        // The points in 3D space we wish to project onto the 2D image plane.
-        // The origin of the coordinate space is assumed to be in the center of the detection.
-        MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(-tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2,-tagHeight/2,-length),
-                new Point3(-tagWidth/2,-tagHeight/2,-length));
-
-        // Project those points
-        MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
-        Calib3d.projectPoints(axis, rvec, tvec, cameraMatrix, new MatOfDouble(), matProjectedPoints);
-        Point[] projectedPoints = matProjectedPoints.toArray();
-
-        // Pillars
-        for(int i = 0; i < 4; i++)
-        {
-            Imgproc.line(buf, projectedPoints[i], projectedPoints[i+4], blue, thickness);
-        }
-
-        // Base lines
-        //Imgproc.line(buf, projectedPoints[0], projectedPoints[1], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[1], projectedPoints[2], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[2], projectedPoints[3], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[3], projectedPoints[0], blue, thickness);
-
-        // Top lines
-        Imgproc.line(buf, projectedPoints[4], projectedPoints[5], green, thickness);
-        Imgproc.line(buf, projectedPoints[5], projectedPoints[6], green, thickness);
-        Imgproc.line(buf, projectedPoints[6], projectedPoints[7], green, thickness);
-        Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
-    }
-
-    /**
-     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
-     * original size of the tag.
-     *
-     * @param points the points which form the trapezoid
-     * @param cameraMatrix the camera intrinsics matrix
-     * @param tagsizeX the original width of the tag
-     * @param tagsizeY the original height of the tag
-     * @return the 6DOF pose of the camera relative to the tag
-     */
-    Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
-    {
-        // The actual 2d points of the tag detected in the image
-        MatOfPoint2f points2d = new MatOfPoint2f(points);
-
-        // The 3d points of the tag in an 'ideal projection'
-        Point3[] arrayPoints3d = new Point3[4];
-        arrayPoints3d[0] = new Point3(-tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[1] = new Point3(tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[2] = new Point3(tagsizeX/2, -tagsizeY/2, 0);
-        arrayPoints3d[3] = new Point3(-tagsizeX/2, -tagsizeY/2, 0);
-        MatOfPoint3f points3d = new MatOfPoint3f(arrayPoints3d);
-
-        // Using this information, actually solve for pose
-        Pose pose = new Pose();
-        Calib3d.solvePnP(points3d, points2d, cameraMatrix, new MatOfDouble(), pose.rvec, pose.tvec, false);
-
-        return pose;
-    }
-
-    /*
-     * A simple container to hold both rotation and translation
-     * vectors, which together form a 6DOF pose.
-     */
-    class Pose
-    {
-        Mat rvec;
-        Mat tvec;
-
-        public Pose()
-        {
-            rvec = new Mat();
-            tvec = new Mat();
-        }
-
-        public Pose(Mat rvec, Mat tvec)
-        {
-            this.rvec = rvec;
-            this.tvec = tvec;
-        }
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
