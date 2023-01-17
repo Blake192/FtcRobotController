@@ -23,12 +23,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -36,22 +33,16 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.ArrayList;
 
-@Autonomous(name="AprilTag Image Detection Auto", group="Competition")
+@Autonomous(name="Professional Auto", group="Competition")
 
-public class AprilTagAutonomousInitDetection extends LinearOpMode
+public class ProfessionalAuto extends LinearOpMode
 {
     /*
     private ElapsedTime runtime = new ElapsedTime();
@@ -125,7 +116,7 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
         forwardDistance = forwardDistance + 2;
 
         TrajectorySequence location1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeLeft(strafeDistane)
+                .strafeLeft(strafeDistane-6)
 //                .turn(10)
                 .forward(forwardDistance)
 //                .waitSeconds(2)
