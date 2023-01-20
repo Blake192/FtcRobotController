@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,11 +19,11 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 
 
-@TeleOp(name = "Improved Two Player Tele Op 9103", group = "Competition")
+@TeleOp(name = "Field Centric Tele Op 9103", group = "Competition")
 
 
 
-public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
+public class FieldCentricTwoPlayer extends LinearOpMode {
     // Custom for lift
     //private DcMotorEx lift;
     // Custom for claw
@@ -61,25 +62,34 @@ public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
 
 
 
+// Create a vector from the gamepad x/y inputs
+// Then, rotate that vector by the inverse of that heading
+
+
+// Pass in the rotated input + right stick value for rotation
+// Rotation is not part of the rotated input thus must be passed in separately
 
         while (!isStopRequested() && opModeIsActive()) {
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            Vector2d input = new Vector2d(
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x
+            ).rotated(-poseEstimate.getHeading());
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
+                            input.getX(),
+                            input.getY(),
                             -gamepad1.right_stick_x
                     )
             );
 
             drive.update();
-
-//            Pose2d poseEstimate = drive.getPoseEstimate();
 //            telemetry.addData("x", poseEstimate.getX());
 //            telemetry.addData("y", poseEstimate.getY());
 //            telemetry.addData("heading", poseEstimate.getHeading());
-//            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
-//            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
-//            telemetry.addData("Value of servoLeft.getPosition();", servoLeft.getPosition());
+            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
+            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
+            telemetry.addData("Value of servoLeft.getPosition();", servoLeft.getPosition());
 
             telemetry.addData(" Vaule of: servoRight.getPwmRange(): ", servoRight.getPwmRange());
             telemetry.addData("Value of: servoRight.isPwmEnabled(): ", servoRight.isPwmEnabled());
