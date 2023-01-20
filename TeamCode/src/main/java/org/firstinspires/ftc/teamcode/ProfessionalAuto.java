@@ -116,6 +116,7 @@ public class ProfessionalAuto extends LinearOpMode
         forwardDistance = forwardDistance + 2;
 
         TrajectorySequence location1 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(strafeDistane-1)
                 .strafeLeft(strafeDistane-6)
 //                .turn(10)
                 .forward(forwardDistance)
@@ -128,11 +129,13 @@ public class ProfessionalAuto extends LinearOpMode
 
 
         TrajectorySequence location2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(strafeDistane-1)
                 .forward(forwardDistance+4)
 //                .waitSeconds(1)
                 .build();
 
         TrajectorySequence location3 = drive.trajectorySequenceBuilder(new Pose2d())
+                .strafeLeft(strafeDistane-1)
                 .strafeRight(strafeDistane-8)
                 .forward(forwardDistance-8)
 //                .waitSeconds(2)
