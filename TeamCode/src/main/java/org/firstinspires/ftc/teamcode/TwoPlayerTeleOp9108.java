@@ -60,7 +60,8 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
         boolean clawInvertRight = true, clawInvertLeft = true;
 
 
-        while (!isStopRequested()) {
+        while (!isStopRequested() && opModeIsActive()) {
+
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -74,17 +75,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
-            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
-            telemetry.addData("Value of servoLeft.getPosition();", servoLeft.getPosition());
 
-            telemetry.addData(" Vaule of: servoRight.getPwmRange(): ", servoRight.getPwmRange());
-            telemetry.addData("Value of: servoRight.isPwmEnabled(): ", servoRight.isPwmEnabled());
-            telemetry.addData("Value of servoRight.getPosition();", servoRight.getPosition());
-
-            telemetry.addData("lift.getCurrentPosition(): ", lift.getCurrentPosition());
-            telemetry.update();
 //
 //            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
 //            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
@@ -99,14 +90,14 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
 //
 //            telemetry.update();
 
-            while (gamepad2.left_trigger > 0.05 && gamepad2.right_trigger < 0.05) { // Raise up on right trigger
+            if (gamepad2.left_trigger > 0.05 && gamepad2.right_trigger < 0.05) { // Raise up on right trigger
 //                lift.setTargetPosition(lift.get CurrentPosition()+100);
                 lift.setPower(1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
 
             }
 
-            while (gamepad2.right_trigger > 0.05 && gamepad2.left_trigger < 0.05) {
+            if (gamepad2.right_trigger > 0.05 && gamepad2.left_trigger < 0.05) {
 //                lift.setTargetPosition(lift.getCurrentPosition()-100);
                 lift.setPower(-1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
@@ -123,7 +114,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
 
             // Right trigger controller 2
             // Starts closed with cone and clawInvertRight = true
-            while (gamepad2.right_bumper && !clawInvertRight && !gamepad2.left_bumper) {
+            if (gamepad2.right_bumper && !clawInvertRight && !gamepad2.left_bumper) {
                 // Servo only go 0 to 1
 
                 servoRight.setPosition(closeDistance); // Close
@@ -131,7 +122,7 @@ public class TwoPlayerTeleOp9108 extends LinearOpMode {
                 clawInvertRight = !clawInvertRight;
             }
 
-            while (gamepad2.left_bumper && clawInvertRight && !gamepad2.right_bumper) {
+            if (gamepad2.left_bumper && clawInvertRight && !gamepad2.right_bumper) {
                 servoRight.setPosition(openDistance); // Open
                 servoLeft.setPosition(1.0f - openDistance); // Open
                 clawInvertRight = !clawInvertRight;
