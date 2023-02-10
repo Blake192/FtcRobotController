@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -54,12 +56,6 @@ public class ProfessionalAuto extends LinearOpMode
     public DcMotorEx lift;
     public ServoImplEx servoLeft;
     public ServoImplEx servoRight;
-
-
-
-
-
-
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -101,6 +97,14 @@ public class ProfessionalAuto extends LinearOpMode
         servoLeft.setPwmEnable();
         servoRight.setPwmEnable();
 
+        float closeDistance = 1.0f;
+        float openDistance = 0.6f;
+
+        boolean closeClaw = true;
+
+
+
+
 
         // put in run opmode
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -108,17 +112,20 @@ public class ProfessionalAuto extends LinearOpMode
 //        Trajectory location1Part1 = drive.trajectoryBuilder(new Pose2d())
 //                .forward(63d)
 //                .build();
-        double forwardDistance = 68;
-        double strafeDistane = 54 ;
+
+
+        double forwardDistance = 50;
+        double strafeDistane = 28 ;
 
         // Use to go to tile 2
-        forwardDistance = forwardDistance/1.5;
-        forwardDistance = forwardDistance + 2;
+        forwardDistance = forwardDistance;
+
 
         TrajectorySequence location1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeLeft(strafeDistane-6)
+                .strafeLeft(strafeDistane)
 //                .turn(10)
                 .forward(forwardDistance)
+                .turn(Math.toRadians(142.5)) // extra 7.5 for lee-way
 //                .waitSeconds(2)
 
 //                .waitSeconds(1)
@@ -128,13 +135,13 @@ public class ProfessionalAuto extends LinearOpMode
 
 
         TrajectorySequence location2 = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(forwardDistance+4)
+                .forward(forwardDistance)
 //                .waitSeconds(1)
                 .build();
 
         TrajectorySequence location3 = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeRight(strafeDistane-8)
-                .forward(forwardDistance-8)
+                .strafeRight(strafeDistane)
+                .forward(forwardDistance)
 //                .waitSeconds(2)
 
 //                .waitSeconds(1)
@@ -175,6 +182,30 @@ public class ProfessionalAuto extends LinearOpMode
          */
         while (!isStarted() && !isStopRequested())
         {
+            // Starts closed with cone and closeClaw = true
+            if (closeClaw) {
+                // Servo only go 0 to 1
+                servoRight.setPosition(closeDistance); // Close
+                servoLeft.setPosition(1.0f - closeDistance); // Close
+            }
+
+            if (!closeClaw) {
+                servoRight.setPosition(openDistance); // Open
+                servoLeft.setPosition(1.0f - openDistance); // Open
+            }
+            // Starts closed with cone and closeClaw = true
+            if (closeClaw) {
+                // Servo only go 0 to 1
+                servoRight.setPosition(closeDistance); // Close
+                servoLeft.setPosition(1.0f - closeDistance); // Close
+            }
+
+            if (!closeClaw) {
+                servoRight.setPosition(openDistance); // Open
+                servoLeft.setPosition(1.0f - openDistance); // Open
+            }
+
+
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
@@ -280,6 +311,14 @@ public class ProfessionalAuto extends LinearOpMode
         boolean hasRun = false;
         while (opModeIsActive()) {
             /* Actually do something useful */
+
+            // lift up to stop dragging cone
+            if (!hasRun) {
+                lift.setPower(1);
+                sleep(1000);
+                lift.setPower(0);
+                sleep(200);
+            }
             if (tagOfInterest == null) {
                 /*
                  * Insert your autonomous code here, presumably running some default configuration
@@ -312,6 +351,16 @@ public class ProfessionalAuto extends LinearOpMode
 
                         //Move to Area 1 ~ 10 seconds
                         drive.followTrajectorySequence(location1);
+                        lift.setPower(1);
+                        sleep(1750);
+                        lift.setPower(0);
+                        sleep(200);
+
+                        // Go forward slightly, it's at 45 degrees to the middle junction in the third square
+//                        new TrajectoryBuilder(new Pose2d())
+//                                .forward(6)
+//                                .build();
+                        // This line above is untested
                         hasRun = true;
                     } else if (tagOfInterest.id == 18 && hasRun == false) {
                         //Run auto for Image 2

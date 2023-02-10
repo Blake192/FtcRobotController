@@ -42,6 +42,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.util.AxisDirection;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -54,10 +56,10 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.4, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = 1.034502785;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -119,7 +121,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
         leftFront = hardwareMap.get(DcMotorEx.class, "motorFrontLeft"); // slot 0
         leftRear = hardwareMap.get(DcMotorEx.class, "motorBackLeft"); // slot 1
         rightRear = hardwareMap.get(DcMotorEx.class, "motorBackRight"); // slot 2
@@ -146,7 +148,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-//       leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+       leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 //        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 //      rightRear.setDirection(DcMotorSimple.Direction.REVERSE);

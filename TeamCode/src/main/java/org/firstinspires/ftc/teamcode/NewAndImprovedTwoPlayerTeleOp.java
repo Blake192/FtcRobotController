@@ -86,7 +86,7 @@ public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
             telemetry.addData("Value of servoRight.getPosition();", servoRight.getPosition());
 
             telemetry.addData("lift.getCurrentPosition(): ", lift.getCurrentPosition());
-            telemetry.update();
+//            telemetry.update();
 //
 //            telemetry.addData(" Vaule of: servoLeft.getPwmRange(): ", servoLeft.getPwmRange());
 //            telemetry.addData("Value of: servoLeft.isPwmEnabled(): ", servoLeft.isPwmEnabled());
@@ -101,15 +101,16 @@ public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
 //
 //            telemetry.update();
 
-            if (gamepad2.left_trigger > 0.05 && gamepad2.right_trigger < 0.05) { // Raise up on right trigger
-//                lift.setTargetPosition(lift.get CurrentPosition()+100);
+            if (gamepad2.left_trigger > 0.1 && gamepad2.right_trigger < 0.1) { // Raise up on right trigger
+//                lift.setTargetPosition(lift.getCurrentPosition()+lift.getCurrentPosition()/10);
+
                 lift.setPower(1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
 
             }
 
-            if (gamepad2.right_trigger > 0.05 && gamepad2.left_trigger < 0.05) {
-//                lift.setTargetPosition(lift.getCurrentPosition()-100);
+            if (gamepad2.right_trigger > 0.1 && gamepad2.left_trigger < 0.1) {
+//                lift.setTargetPosition(lift.getCurrentPosition()-lift.getCurrentPosition()/10);
                 lift.setPower(-1);
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
             }
@@ -119,7 +120,7 @@ public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
                 telemetry.addData("Lift position - ", lift.getCurrentPosition());
                 lift.setPower(0);
             }
-            telemetry.update();
+
             float closeDistance = 1.0f;
             float openDistance = 0.6f;
 
@@ -138,6 +139,7 @@ public class NewAndImprovedTwoPlayerTeleOp extends LinearOpMode {
                 servoLeft.setPosition(1.0f - openDistance); // Open
                 clawInvertRight = !clawInvertRight;
             }
+            telemetry.update();
 //            if (gamepad1.right) {
 //                servoRight.setPosition(servoRight.getPosition());
 //                servoLeft.setPosition(servoLeft.getPosition());
